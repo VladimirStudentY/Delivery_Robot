@@ -1,0 +1,7 @@
+### IntelliJ IDEA ###
+out/
+.idea/
+DeliveryRobot.iml
+!**/src/main/**/out/
+!**/src/test/**/out/
+
