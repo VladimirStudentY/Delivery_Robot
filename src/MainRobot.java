@@ -26,13 +26,13 @@ public class MainRobot {
             for (int i = 0; i < route.length; i++) {
                 route[i] = generateRoute("RLRFR", 100);  // заполняю массив
                 resultR = countingTurns(route[i]);                           // подчёт R
-                System.out.println(" "+route[i].substring(0, 25) + "\t: -->"+resultR); // вывод
+                System.out.println(" " + route[i].substring(0, 25) + "\t: -->" + resultR); // вывод
                 check(resultR);
             }
         };
 
         for (int i = 0; i < route.length; i++) {           // запускаю цикл запуска потоков
-            Thread  thread = new Thread(flowLogic);
+            Thread thread = new Thread(flowLogic);
             thread.start();
             thread.join();
         }
