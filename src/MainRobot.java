@@ -21,20 +21,21 @@ public class MainRobot {
     static int max = -1, resultR, maxR = 0;
 
     public static void main(String[] args) throws InterruptedException {
-        String[] route = new String[1000];                              //String[1000];   массив строк
-
+        String[] route = new String[1000];                          // String[1000];   массив строк
         Runnable flowLogic = () -> {
             for (int i = 0; i < route.length; i++) {
                 route[i] = generateRoute("RLRFR", 100);  // заполняю массив
                 resultR = countingTurns(route[i]);                           // подчёт R
-                System.out.println(" " + route[i].substring(0, 50) + "\t: -->  " + resultR); // вывод
+                System.out.println(" "+route[i].substring(0, 25) + "\t: -->"+resultR); // вывод
                 check(resultR);
             }
         };
-        Thread thread = new Thread(flowLogic);
-        thread.start();
-        thread.join();
-        System.out.println();
+
+        for (int i = 0; i < route.length; i++) {           // запускаю цикл запуска потоков
+            Thread  thread = new Thread(flowLogic);
+            thread.start();
+            thread.join();
+        }
         mapSorting(sizeToFreq);
     }
 
@@ -51,18 +52,19 @@ public class MainRobot {
         return Math.toIntExact(line.chars().filter(ch -> ch == 'R').count());
     }
 
-    public synchronized static void check(int key) {      // key  51 повтор R --> value   1 раз
-        if (!sizeToFreq.containsKey(key)) {
-            sizeToFreq.put(key, 1);                      // записать по ключу key  значение  1
-            max = sizeToFreq.get(key) > max ? sizeToFreq.get(key) : max;
-        } else {
-            sizeToFreq.put(key, (sizeToFreq.get(key) + 1));
-            if (sizeToFreq.get(key) > max) {
-                max = sizeToFreq.get(key);
-                maxR = key;
+    public static void check(int key) {      // key  51 повтор R --> value   1 раз
+        synchronized (sizeToFreq) {
+            if (!sizeToFreq.containsKey(key)) {
+                sizeToFreq.put(key, 1);                      // записать по ключу key  значение  1
+                max = sizeToFreq.get(key) > max ? sizeToFreq.get(key) : max;
+            } else {
+                sizeToFreq.put(key, (sizeToFreq.get(key) + 1));
+                if (sizeToFreq.get(key) > max) {
+                    max = sizeToFreq.get(key);
+                    maxR = key;
+                }
             }
         }
-
     }
 
     public static void mapSorting(Map<Integer, Integer> map) {
@@ -72,8 +74,8 @@ public class MainRobot {
             Integer key = pair.getKey(),
                     value = pair.getValue();
             if (i == 1) {
-                System.out.printf("Самое частое количество повторений %d (встретилось %d раз)\n" +
-                        "  Другие размеры:\n", maxR, max);
+                System.out.printf("\nСамое частое количество повторений %d (встретилось %d раз)\n" +
+                        " \tДругие размеры:\n", maxR, max);
                 i++;
             }
             if (maxR == key) {
